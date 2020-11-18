@@ -51,4 +51,23 @@ bool Ellipse::operator==(const Shape& another) const {
                    (other_ellipse->f1 == f2 && other_ellipse->f2 == f1));
 }
 
+bool Ellipse::isCongruentTo(const Shape& another) const {
+    const auto* other_ellipse = dynamic_cast<const Ellipse*>(&another);
+
+    return (other_ellipse != nullptr &&
+            fabs(other_ellipse->_a - _a) < EPSILON &&
+            fabs(small_axis() - other_ellipse->small_axis()) < EPSILON
+    );
+}
+
+bool Ellipse::isSimilarTo(const Shape& another) const {
+    const auto* other_ellipse = dynamic_cast<const Ellipse*>(&another);
+
+    if(other_ellipse == nullptr)
+        return false;
+
+    double factor = _a / other_ellipse->_a;
+    return fabs(small_axis() - other_ellipse->small_axis() * factor) < EPSILON;
+}
+
 

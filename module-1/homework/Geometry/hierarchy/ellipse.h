@@ -15,6 +15,9 @@ public:
 
     bool operator==(const Shape& another) const override;
 
+    bool isCongruentTo(const Shape& another) const override;
+    bool isSimilarTo(const Shape& another) const override;
+
 private:
     Point& f1;
     Point& f2;
