@@ -1,4 +1,7 @@
 
+#ifndef POINT_H
+#define POINT_H
+
 struct Point {
 
     double x;
@@ -10,4 +13,8 @@ struct Point {
     bool operator==(const Point& other) const;
     bool operator!=(const Point& other) const;
     Point operator+(const Point& other) const;
+    Point operator-(const Point& other) const;
+    Point operator*(double coef) const;
 };
+
+#endif

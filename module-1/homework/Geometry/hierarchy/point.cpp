@@ -1,9 +1,6 @@
 #include "point.h"
 
-Point::Point(double x, double y) {
-    x = x;
-    y = y;
-}
+Point::Point(double x, double y) : x(x), y(y) {}
 
 bool Point::operator==(const Point& other) const {
     return x == other.x && y == other.y;
@@ -15,4 +12,12 @@ bool Point::operator!=(const Point& other) const {
 
 Point Point::operator+(const Point& other) const {
     return Point(x + other.x, y + other.y);
+}
+
+Point Point::operator-(const Point& other) const {
+    return Point(x - other.x, y - other.y);
+}
+
+Point Point::operator*(double coef) const {
+    return Point(x * coef, y * coef);
 }

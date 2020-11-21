@@ -29,5 +29,5 @@ Point Rectangle::center() {
 }
 
 std::pair<Line, Line> Rectangle::diagonals() {
-    return {Line(Point(_vertices[0], _vertices[2])), Line(Point(_vertices[1], _vertices[3]))};
+    return {Line(_vertices[0], _vertices[2]), Line(_vertices[1], _vertices[3])};
 }

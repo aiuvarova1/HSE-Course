@@ -1,4 +1,4 @@
-
+#include <vector>
 #include "shape.h"
 
 #ifndef POLYGON_H
@@ -6,7 +6,8 @@
 
 class Polygon : public Shape {
 public:
-    Polygon(std::vector<Point>& vertices);
+    Polygon() = default;
+    Polygon(const std::vector<Point>& vertices): _vertices(vertices) {};
     int verticesCount() const;
     std::vector<Point> getVertices() const;
     bool isConvex();
@@ -19,12 +20,15 @@ public:
     bool isCongruentTo(const Shape& another) const override;
     bool isSimilarTo(const Shape& another) const override;
 
+    void rotate(Point center, double angle) override;
+    void reflex(Point center) override;
+    void reflex(Line axis) override;
+    void scale(Point center, double coefficient) override;
+
 protected:
     std::vector<Point> _vertices;
 private:
-    double getTriangleDet(const Point& p1, const Point& p2, const Point& p3) const;
     std::vector<std::pair<double, double>> getLengthsAndAngles() const;
-    double getAngle(const Point& first, const Point& second, const Point& middlePoint) const;
 };
 
 #endif

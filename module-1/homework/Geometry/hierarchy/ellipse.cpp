@@ -8,11 +8,6 @@ std::pair<Point, Point> Ellipse::focuses() {
     return {f1, f2};
 }
 
-std::pair<Line, Line> Ellipse::directrices() {
-//    Point a = {};
-//    return {Line(), Line()};
-}
-
 double Ellipse::eccentricity() {
     return focalDist() / _a;
 }
@@ -27,7 +22,7 @@ double Ellipse::focalDist() const {
 
 double Ellipse::perimeter() const {
     double b = small_axis();
-    return 2 * Shape::PI * sqrt((_a * _a + b * b) / 2.0);
+    return 4 * (PI * _a * b + _a - b) / (_a + b);
 }
 
 bool Ellipse::containsPoint(Point point) const {
@@ -46,7 +41,7 @@ double Ellipse::small_axis() const {
 bool Ellipse::operator==(const Shape& another) const {
     const auto* other_ellipse = dynamic_cast<const Ellipse*>(&another);
     return other_ellipse != nullptr &&
-           other_ellipse->_a == _a && (
+           (other_ellipse->_a - _a) < EPSILON && (
                    (other_ellipse->f1 == f1 && other_ellipse->f2 == f2) ||
                    (other_ellipse->f1 == f2 && other_ellipse->f2 == f1));
 }
@@ -63,11 +58,32 @@ bool Ellipse::isCongruentTo(const Shape& another) const {
 bool Ellipse::isSimilarTo(const Shape& another) const {
     const auto* other_ellipse = dynamic_cast<const Ellipse*>(&another);
 
-    if(other_ellipse == nullptr)
+    if (other_ellipse == nullptr)
         return false;
 
     double factor = _a / other_ellipse->_a;
     return fabs(small_axis() - other_ellipse->small_axis() * factor) < EPSILON;
+}
+
+void Ellipse::rotate(const Point center, double angle) {
+    Shape::rotatePoint(f1, center, angle);
+    Shape::rotatePoint(f2, center, angle);
+}
+
+void Ellipse::reflex(const Point center) {
+    Shape::reflexPoint(f1, center);
+    Shape::reflexPoint(f2, center);
+}
+
+void Ellipse::reflex(const Line axis) {
+    Shape::reflexPoint(f1, axis);
+    Shape::reflexPoint(f2, axis);
+}
+
+void Ellipse::scale(const Point center, double coefficient) {
+    Shape::scalePoint(f1, center, coefficient);
+    Shape::scalePoint(f2, center, coefficient);
+    _a *= coefficient;
 }
 
 

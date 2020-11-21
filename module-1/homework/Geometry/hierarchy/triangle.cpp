@@ -4,7 +4,7 @@ Triangle::Triangle(Point p1, Point p2, Point p3) {
     _vertices = {p1, p2, p3};
 }
 
-Circle Triangle::circumscribedCircle() const{
+Circle Triangle::circumscribedCircle() const {
     Point first_side = _vertices[0] - _vertices[1];
     Point second_side = _vertices[1] - _vertices[2];
 
@@ -22,8 +22,27 @@ Circle Triangle::circumscribedCircle() const{
     return Circle(intersection, Shape::getDist(intersection, _vertices[0]));
 }
 
-Circle Triangle::inscribedCircle() const {
-    return Circle(Point(), 0);
+Circle Triangle::inscribedCircle() {
+
+    Line first_bisector = findBisector(0);
+    Line second_bisector = findBisector(1);
+
+    Point center = Line::intersection(first_bisector, second_bisector);
+
+    return Circle(center, 2 * area() / perimeter());
+}
+
+Line Triangle::findBisector(int verticeNum) const {
+    int vertices_count = _vertices.size();
+
+    Point vertice = getVertices()[verticeNum];
+    Point first = _vertices[(verticeNum + 1) % vertices_count];
+    Point second = _vertices[(verticeNum + 2) % vertices_count];
+
+    double factor = getDist(first, vertice) / getDist(second, vertice);
+    Point bisector_intersection =
+            getVectorDividedByFactor(first, second, factor);
+    return {bisector_intersection, vertice};
 }
 
 

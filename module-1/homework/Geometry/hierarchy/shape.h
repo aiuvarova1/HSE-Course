@@ -28,7 +28,18 @@ public:
     virtual void scale(Point center, double coefficient)=0;
 
     static double getDist(const Point& p1, const Point& p2);
+    static Point getVectorDividedByFactor(const Point& p1, const Point& p2, double factor);
     static Point getVectorCenter(const Point& p1, const Point& p2);
+    static double getAngle(const Point& first, const Point& second, const Point& middlePoint);
+
+    static void rotatePoint(Point& point, const Point& center, double angle);
+    static void reflexPoint(Point& point, const Point& center);
+
+    static void reflexPoint(Point& point, const Line& line);
+    static void scalePoint(Point& point, const Point& center, double coefficient);
+
+    static double dotProduct(const Point& p1, const Point& p2);
+    static double crossProduct(const Point& p1, const Point& p2);
 };
 
 #endif

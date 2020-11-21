@@ -5,12 +5,9 @@
 #include <vector>
 
 #include "hierarchy/polygon.h"
-#include "hierarchy/point.h"
-#include "hierarchy/line.h"
 #include "hierarchy/rectangle.h"
 #include "hierarchy/triangle.h"
 #include "hierarchy/circle.h"
-#include "hierarchy/ellipse.h"
 #include "hierarchy/square.h"
 
 #include "gtest/gtest.h"

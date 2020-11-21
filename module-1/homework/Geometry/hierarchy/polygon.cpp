@@ -1,9 +1,5 @@
-#include <vector>
 #include "polygon.h"
 
-Polygon::Polygon(std::vector<Point>& vertices) {
-    _vertices = vertices;
-}
 
 int Polygon::verticesCount() const {
     return _vertices.size();
@@ -18,20 +14,16 @@ bool Polygon::isConvex() {
     Point* second = &_vertices[_vertices.size() - 1];
     Point* third = &_vertices[0];
 
-    bool sign = getTriangleDet(*first, *second, *third) > 0;
+    bool sign = fabs(crossProduct(*first - *second, *third - *second)) < EPSILON;
     for (size_t i = 1; i < _vertices.size(); i++) {
         first = second;
-        second = first;
+        second = third;
         third = &_vertices[i];
 
-        if (getTriangleDet(*first, *second, *third) > 0 != sign)
+        if (fabs(crossProduct(*first - *second, *third - *second)) < EPSILON != sign)
             return false;
     }
     return true;
-}
-
-double Polygon::getTriangleDet(const Point& p1, const Point& p2, const Point& p3) const {
-    return p1.x * p2.y + p2.x * p3.y + p1.y * p3.x - p2.y * p3.x - p3.y * p1.x - p1.y * p2.x;
 }
 
 double Polygon::perimeter() const {
@@ -63,6 +55,11 @@ bool Polygon::containsPoint(Point point) const {
         second = &_vertices[(i + 1) % verticesCount()];
 
         cur_angle += getAngle(*first, *second, point);
+
+        if (getDist(*first, point) + getDist(*second, point)
+            - getDist(*first, *second) < EPSILON) {
+            return true;
+        }
     }
     return fabs(2 * PI - cur_angle) <= EPSILON;
 }
@@ -70,7 +67,7 @@ bool Polygon::containsPoint(Point point) const {
 bool Polygon::operator==(const Shape& another) const {
     const auto* other_polygon = dynamic_cast<const Polygon*>(&another);
     if (other_polygon == nullptr ||
-        other_polygon->verticesCount() == verticesCount())
+        other_polygon->verticesCount() != verticesCount())
         return false;
     int offset = std::find(_vertices.begin(), _vertices.end(), other_polygon->_vertices[0])
                  - _vertices.begin();
@@ -80,9 +77,12 @@ bool Polygon::operator==(const Shape& another) const {
     }
 
     const Point* corresponding_point;
+    double dif_x, dif_y;
     for (int i = 0; i < verticesCount(); i++) {
         corresponding_point = &_vertices[(i + offset) % verticesCount()];
-        if (other_polygon->_vertices[i] != *corresponding_point) {
+        dif_x = (other_polygon->_vertices[i] - *corresponding_point).x;
+        dif_y = (other_polygon->_vertices[i] - *corresponding_point).y;
+        if (fabs(dif_x) > EPSILON || fabs(dif_y) > EPSILON) {
             return false;
         }
     }
@@ -177,15 +177,29 @@ std::vector<std::pair<double, double>> Polygon::getLengthsAndAngles() const {
     return lengthsAndAngles;
 }
 
-double Polygon::getAngle(const Point& first, const Point& second, const Point& middlePoint) const {
-
-    double a = getDist(first, second);
-    double b = getDist(first, middlePoint);
-    double c = getDist(second, middlePoint);
-
-    //cos theorem
-    double cos = (b * b + c * c - a * a) / (2 * b * c);
-    return acos(cos);
+void Polygon::rotate(Point center, double angle) {
+    for (Point& p : _vertices) {
+        Shape::rotatePoint(p, center, angle);
+    }
 }
+
+void Polygon::reflex(Point center) {
+    for (Point& p : _vertices) {
+        Shape::reflexPoint(p, center);
+    }
+}
+
+void Polygon::reflex(Line axis) {
+    for (Point& p : _vertices) {
+        Shape::reflexPoint(p, axis);
+    }
+}
+
+void Polygon::scale(Point center, double coefficient) {
+    for (Point& p : _vertices) {
+        Shape::scalePoint(p, center, coefficient);
+    }
+}
+
 
 

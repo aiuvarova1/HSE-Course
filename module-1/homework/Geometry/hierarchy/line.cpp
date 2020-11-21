@@ -2,7 +2,8 @@
 #include "line.h"
 #include <iostream>
 
-Line::Line(Point p1, Point p2) {
+Line::Line(Point p1, Point p2) : p1(p1), p2(p2) {
+
     if (p1 == p2)
         throw std::invalid_argument("Points are equal");
 
@@ -19,7 +20,6 @@ Line::Line(Point p1, Point p2) {
         b = 1;
         c = -(a * p1.x + p1.y);
     }
-
 }
 
 bool Line::operator==(const Line& other) const {
@@ -31,12 +31,21 @@ bool Line::operator!=(const Line& other) const {
 }
 
 Point Line::intersection(const Line& first, const Line& second) {
-    if(first.a == second.b) {
-        return nullptr;
+    if (first.a == second.b) {
+        throw std::runtime_error("No intersection");
     }
+
     double x = (first.b * second.c - second.b * first.c) /
                (first.a * second.b - second.a * first.b);
     double y = (second.a * first.c - first.a * second.c) /
                (first.a * second.b - second.a * first.b);
     return Point(x, y);
+}
+
+const Point& Line::getFirstPoint() const {
+    return p1;
+}
+
+const Point& Line::getSecondPoint() const {
+    return p2;
 }
