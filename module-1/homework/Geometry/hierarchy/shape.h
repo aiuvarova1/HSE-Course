@@ -10,8 +10,8 @@
 class Shape {
 
 public:
-    constexpr static const double PI=3.1415926;
-    constexpr static const double EPSILON = 0.001;
+    constexpr static double PI=3.1415926;
+    constexpr static double EPSILON = 0.001;
 
     virtual ~Shape() = default;
     virtual double perimeter() const=0;

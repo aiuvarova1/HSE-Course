@@ -25,8 +25,8 @@ public:
     void scale(Point center, double coefficient) override;
 
 private:
-    Point& f1;
-    Point& f2;
+    Point f1;
+    Point f2;
     double _a;
 
     double focalDist() const;
