@@ -4,17 +4,14 @@
 
 namespace task {
 
-
 class list {
-
 public:
 
-    list();
+    list() : _size(0), _head(nullptr), _tail(nullptr) {};
     list(size_t count, const int& value = int());
 
     ~list();
     list& operator=(const list& other);
-
 
     int& front();
     const int& front() const;
@@ -40,11 +37,29 @@ public:
     void unique();
     void sort();
 
-    // Your code goes here?..
-
 private:
+    struct Node {
+        int _value;
+        Node* _next;
+        Node* _prev;
 
-    // Your code goes here...
+        Node(int value) : _value(value), _next(nullptr), _prev(nullptr) {};
+        Node(int value, Node* prev, Node* next) : _value(value), _prev(prev), _next(next) {};
+
+        ~Node() = default;
+    };
+
+    Node* _head;
+    Node* _tail;
+
+    size_t _size;
+
+    //returns prev node
+    Node* remove_node(Node* to_remove);
+    void quick_sort(Node* start, Node* end);
+    Node* partition(Node* start_node, Node* end_node);
+    void swap(Node* first, Node* second);
+
 
 };
 
