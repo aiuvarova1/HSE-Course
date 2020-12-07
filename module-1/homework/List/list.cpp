@@ -17,11 +17,34 @@ task::list::list(size_t count, const int& value) {
     _tail = cur_node;
 }
 
+task::list::list(const task::list& other) {
+    _size = other._size;
+
+    Node* cur_node = new Node(other._head->_value);
+    Node* cur_other_node = other._head->_next;
+
+    _head = cur_node;
+
+    while (cur_other_node != nullptr) {
+        Node* new_node = new Node(cur_other_node->_value);
+        cur_node->_next = new_node;
+        new_node->_prev = cur_node;
+
+        cur_node = cur_node->_next;
+        cur_other_node = cur_other_node->_next;
+    }
+
+    _tail = cur_node;
+}
+
 task::list::~list() {
     clear();
 }
 
 task::list& task::list::operator=(const task::list& other) {
+    if (this == &other)
+        return *this;
+
     clear();
     _size = other._size;
 
@@ -74,12 +97,16 @@ void task::list::clear() {
         cur_node = cur_node->_next;
         delete to_delete;
     }
+    _head = nullptr;
+    _tail = nullptr;
     _size = 0;
 }
 
 void task::list::push_back(const int& value) {
     _size += 1;
-    Node* node = new Node(value, _tail, nullptr);
+    Node* node = new Node(value);
+
+    node->_prev = _tail;
 
     if (_tail != nullptr)
         _tail->_next = node;
@@ -168,14 +195,15 @@ void task::list::swap(task::list& other) {
     other._size = size;
 }
 
-void task::list::remove(const int& value) {
+void task::list::remove(const int value) {
     Node* cur_node = _head;
 
     while (cur_node != nullptr) {
         if (cur_node->_value == value) {
             cur_node = remove_node(cur_node);
+        } else {
+            cur_node = cur_node->_next;
         }
-        cur_node = cur_node->_next;
     }
 }
 
@@ -215,57 +243,49 @@ task::list::Node* task::list::remove_node(task::list::Node* cur_node) {
         if (cur_node->_prev == nullptr)
             _head = cur_node;
     }
+
+    if (to_remove == _head)
+        _head = nullptr;
+    if (to_remove == _tail)
+        _tail = nullptr;
+
     _size -= 1;
     delete to_remove;
 
-    return prev_node;
+    return cur_node;
 }
 
 task::list::Node* task::list::partition(task::list::Node* start_node, task::list::Node* end_node) {
-    int pivot = start_node->_value;
+    int pivot = end_node->_value;
 
-    Node* last_smaller = start_node->_next;
+    Node* last_smaller = start_node;
 
-    Node* cur_node = start_node->_next;
+    Node* cur_node = start_node;
 
-    while (cur_node != end_node->_next) {
+    while (cur_node != end_node) {
         if (cur_node->_value <= pivot) {
             swap(last_smaller, cur_node);
-            last_smaller = cur_node->_next;
+            last_smaller = last_smaller->_next;
         }
         cur_node = cur_node->_next;
     }
+    swap(last_smaller, end_node);
 
     return last_smaller;
 }
 
 void task::list::swap(task::list::Node* first, task::list::Node* second) {
-    Node* temp = first->_prev;
-    first->_prev = second->_prev;
-    if (first->_prev != nullptr)
-        first->_prev->_next = first;
-
-    second->_prev = temp;
-    if (second->_prev != nullptr)
-        second->_prev->_next = second;
-
-    temp = first->_next;
-    first->_next = second->_next;
-    if (first->_next != nullptr)
-        first->_next->_prev = first;
-
-    second->_next = temp;
-    if (second->_next != nullptr)
-        second->_next->_prev = second;
-
+    int tmp_val = first->_value;
+    first->_value = second->_value;
+    second->_value = tmp_val;
 }
 
 void task::list::quick_sort(task::list::Node* start, task::list::Node* end) {
-    if (start == end)
+    if (start == end || end == nullptr || start == end->_next)
         return;
 
     Node* pivot = partition(start, end);
 
     quick_sort(start, pivot->_prev);
-    quick_sort(pivot, end);
+    quick_sort(pivot->_next, end);
 }

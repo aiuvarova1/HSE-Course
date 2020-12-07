@@ -9,6 +9,7 @@ public:
 
     list() : _size(0), _head(nullptr), _tail(nullptr) {};
     list(size_t count, const int& value = int());
+    list(const list& other);
 
     ~list();
     list& operator=(const list& other);
@@ -33,7 +34,7 @@ public:
     void swap(list& other);
 
 
-    void remove(const int& value);
+    void remove(int value);
     void unique();
     void sort();
 
@@ -43,8 +44,7 @@ private:
         Node* _next;
         Node* _prev;
 
-        Node(int value) : _value(value), _next(nullptr), _prev(nullptr) {};
-        Node(int value, Node* prev, Node* next) : _value(value), _prev(prev), _next(next) {};
+        Node(int value, Node* prev = nullptr, Node* next = nullptr) : _value(value), _prev(prev), _next(next) {}
 
         ~Node() = default;
     };
