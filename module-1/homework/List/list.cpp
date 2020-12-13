@@ -117,7 +117,7 @@ void task::list::push_back(const int& value) {
 }
 
 void task::list::pop_back() {
-    if (_size == 0) {
+    if (empty()) {
         return;
     }
     _size -= 1;
@@ -126,7 +126,7 @@ void task::list::pop_back() {
 
     if (_tail != nullptr)
         _tail->_next = nullptr;
-    if (_size == 0)
+    if (empty())
         _head = nullptr;
 
     delete to_delete;
@@ -145,7 +145,7 @@ void task::list::push_front(const int& value) {
 }
 
 void task::list::pop_front() {
-    if (_size == 0)
+    if (empty())
         return;
 
     _size -= 1;
@@ -154,7 +154,7 @@ void task::list::pop_front() {
 
     if (_head != nullptr)
         _head->_prev = nullptr;
-    if (_size == 0)
+    if (empty())
         _tail = nullptr;
 
     delete to_delete;
