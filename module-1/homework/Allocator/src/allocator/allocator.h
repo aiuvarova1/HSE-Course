@@ -25,12 +25,12 @@ public:
     explicit CustomAllocator(const CustomAllocator<U>& other) noexcept;
 
     T* allocate(size_t n) {  // NOLINT
-        if (n == 0 || cur_size_ + n > kMaxSize) {
+        if (n == 0 || *cur_size_ + n > kMaxSize) {
             return nullptr;
         }
 
-        cur_size_ += n;
-        return static_cast<T*>(data_) + (cur_size_ - n);
+        *cur_size_ += n;
+        return static_cast<T*>(data_) + (*cur_size_ - n);
     }
 
     void deallocate(T* p, size_t n) {  // NOLINT
@@ -54,15 +54,15 @@ public:
 
 private:
     static const size_t kMaxSize = 10000;
-    void* data_;
-    size_t cur_size_ = 0;
-    size_t refs_;
+    void* data_ = nullptr;
+    size_t* cur_size_;
+    size_t* refs_;
 public:
     void* GetData() const {
         return data_;
     }
 
-    size_t GetSize() const {
+    size_t* GetSize() const {
         return cur_size_;
     }
 
@@ -70,7 +70,7 @@ public:
         return kMaxSize;
     }
 
-    size_t GetRefs() const {
+    size_t* GetRefs() const {
         return refs_;
     }
 };
@@ -88,27 +88,29 @@ bool operator!=(const CustomAllocator<T>& lhs, const CustomAllocator<U>& rhs) no
 template<typename T>
 CustomAllocator<T>::CustomAllocator() {
     data_ = ::operator new(sizeof(T) * kMaxSize);
-    cur_size_ = 0;
-    refs_ = 1;
+    cur_size_ = new size_t(0);
+    refs_ = new size_t(1);
 }
 
 template<typename T>
 CustomAllocator<T>::CustomAllocator(const CustomAllocator& other) noexcept :
         data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
-    refs_ += 1;
+    *refs_ += 1;
 }
 
 template<typename T>
 template<typename U>
 CustomAllocator<T>::CustomAllocator(const CustomAllocator<U>& other) noexcept :
         data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
-    refs_ += 1;
+    *refs_ += 1;
 }
 
 template<typename T>
 CustomAllocator<T>::~CustomAllocator() {
-    refs_--;
-    if (refs_ == 0) {
+    *refs_ -= 1;
+    if (*refs_ == 0) {
         ::operator delete(data_);
+        delete refs_;
+        delete cur_size_;
     }
 }

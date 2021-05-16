@@ -485,12 +485,12 @@ namespace task {
         if(allocator_ != other.allocator_ && !allocator_traits::propagate_on_container_swap::value) {
             return;
         }
-        std::swap(nil_, other.nil_);
-        std::swap(size_, other.size_);
 
         if (allocator_ != other.allocator_) {
             std::swap(allocator_, other.allocator_);
         }
+        std::swap(nil_, other.nil_);
+        std::swap(size_, other.size_);
     }
 
     template<typename T, typename Allocator>
