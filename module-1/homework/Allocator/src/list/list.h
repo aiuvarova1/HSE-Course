@@ -289,6 +289,9 @@ namespace task {
         Clear();
 
         if (allocator_traits::propagate_on_container_move_assignment::value) {
+            allocator_.destroy(nil_);
+            allocator_.deallocate(nil_, 1);
+
             allocator_ = std::move(other.allocator_);
             nil_ = other.nil_;
             other.nil_ = nullptr;
