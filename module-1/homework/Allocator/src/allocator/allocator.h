@@ -25,7 +25,7 @@ public:
     explicit CustomAllocator(const CustomAllocator<U>& other) noexcept;
 
     T* allocate(size_t n) {  // NOLINT
-        if (n == 0 || cur_size_ + n > max_size_) {
+        if (n == 0 || cur_size_ + n > kMaxSize) {
             return nullptr;
         }
 
@@ -53,9 +53,9 @@ public:
     friend bool operator!=(const CustomAllocator<K>& lhs, const CustomAllocator<U>& rhs) noexcept;
 
 private:
+    static const size_t kMaxSize = 10000;
     void* data_;
     size_t cur_size_ = 0;
-    size_t max_size_ = 10000;
     size_t refs_;
 public:
     void* GetData() const {
@@ -67,7 +67,7 @@ public:
     }
 
     size_t GetMaxSize() const {
-        return max_size_;
+        return kMaxSize;
     }
 
     size_t GetRefs() const {
@@ -87,28 +87,28 @@ bool operator!=(const CustomAllocator<T>& lhs, const CustomAllocator<U>& rhs) no
 
 template<typename T>
 CustomAllocator<T>::CustomAllocator() {
-    data_ = ::operator new(sizeof(T) * max_size_);
+    data_ = ::operator new(sizeof(T) * kMaxSize);
     cur_size_ = 0;
     refs_ = 1;
 }
 
 template<typename T>
 CustomAllocator<T>::CustomAllocator(const CustomAllocator& other) noexcept :
-        data_(other.GetData()), cur_size_(other.GetSize()), max_size_(other.GetMaxSize()), refs_(other.GetRefs()) {
-            refs_ += 1;
-        }
+        data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
+    refs_ += 1;
+}
 
 template<typename T>
 template<typename U>
 CustomAllocator<T>::CustomAllocator(const CustomAllocator<U>& other) noexcept :
-        data_(other.GetData()), cur_size_(other.GetSize()), max_size_(other.GetMaxSize()), refs_(other.GetRefs()) {
-            refs_ += 1;
-        }
+        data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
+    refs_ += 1;
+}
 
 template<typename T>
 CustomAllocator<T>::~CustomAllocator() {
     refs_--;
-    if(refs_ == 0) {
+    if (refs_ == 0) {
         ::operator delete(data_);
     }
 }

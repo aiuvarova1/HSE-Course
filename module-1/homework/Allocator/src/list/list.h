@@ -224,8 +224,7 @@ namespace task {
     }
 
     template<typename T, typename Allocator>
-    List<T, Allocator>::List(const List& other, const Allocator& alloc) {
-        allocator_(alloc);
+    List<T, Allocator>::List(const List& other, const Allocator& alloc) : allocator_(alloc) {
         BaseInit();
         Clone(other);
     }
@@ -281,22 +280,6 @@ namespace task {
         for (auto i = other.Begin(); i != other.End(); i++) {
             PushBack(i.GetValue());
         }
-//        Node* cur_node = allocator_.allocate(1);
-//        allocator_.construct(cur_node, other.nil_->_next->_value);
-//        Node* cur_other_node = other.nil_->_next->_next;
-//
-//        nil_->_next = cur_node;
-//
-//        while (cur_other_node != other.nil_) {
-//            Node* new_node = allocator_.allocate(1);
-//            allocator_.construct(new_node, cur_other_node->_value);
-//
-//            cur_node->_next = new_node;
-//            new_node->_prev = cur_node;
-//
-//            cur_node = cur_node->_next;
-//            cur_other_node = cur_other_node->_next;
-//        }
 
         return *this;
     }
