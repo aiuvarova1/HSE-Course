@@ -24,6 +24,21 @@ TEST(CopyAssignment, Test) {
 }
 
 TEST(MoveAssignment, Test1) {
+    task::List<std::string, CustomAllocator<std::string>> l1;
+    task::List<std::string, CustomAllocator<std::string>> l2;
+    std::list<std::string, CustomAllocator<std::string>> l3;
+    std::list<std::string, CustomAllocator<std::string>> l4;
+
+    l1.PushBack("hello");
+    l2 = std::move(l1);
+    l3.push_back("hello");
+    l4 = std::move(l3);
+
+    ASSERT_TRUE(std::equal(l1.Begin(), l1.End(), l3.begin(), l3.end()));
+    ASSERT_TRUE(std::equal(l2.Begin(), l2.End(), l4.begin(), l4.end()));
+}
+
+TEST(MoveAssignment2, Test1) {
     task::List<std::string> l1;
     task::List<std::string> l2;
     std::list<std::string> l3;

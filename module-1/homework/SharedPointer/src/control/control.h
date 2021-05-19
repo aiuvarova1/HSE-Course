@@ -4,25 +4,61 @@
 
 class SharedCount {
 public:
-    // Your code goes here...
+
+    SharedCount() : strongRefCount(0) {};
+
+    explicit SharedCount(size_t refs) : strongRefCount(refs) {};
+
+    virtual ~SharedCount() = default;
+
+    void increaseShared() {
+        strongRefCount++;
+    }
+
+    void decreaseShared() {
+        strongRefCount--;
+    }
+
+    size_t getShared() {
+        return strongRefCount;
+    }
 
 protected:
-    // Your code goes here...
+    std::atomic<std::size_t> strongRefCount;
+
 };
 
 class SharedWeakCount : public SharedCount {
 public:
-    // Your code goes here...
+    SharedWeakCount() : weakRefCount(0) {};
+
+    virtual ~SharedWeakCount() = default;
+
+    void increaseWeak() {
+        weakRefCount++;
+    }
+
+    void decreaseWeak() {
+        weakRefCount--;
+    }
+
+    size_t getWeak() {
+        return weakRefCount;
+    }
 
 protected:
-    // Your code goes here...
+    std::atomic<std::size_t> weakRefCount;
+
 };
 
-template <typename T, typename Deleter>
+template<typename T, typename Deleter=std::default_delete<T*>>
 class ControlBlock : public SharedWeakCount {
 public:
-    // Your code goes here...
+    ControlBlock() = default;
+    ControlBlock(T obj) : managedObject(obj) {};
+    ControlBlock(T obj, Deleter d) : managedObject(obj), deleter(d) {};
 
 private:
-    // Your code goes here...
+    T managedObject;
+    Deleter deleter;
 };
