@@ -153,7 +153,7 @@ T* SharedPtr<T>::Get() const noexcept {
 
 template<typename T>
 int64_t SharedPtr<T>::UseCount() const noexcept {
-    return block_ ? block_->GetShared() : 0;
+    return block_ != nullptr ? block_->GetShared() : 0;
 }
 
 template<typename T>
@@ -168,7 +168,7 @@ T* SharedPtr<T>::operator->() const noexcept {
 
 template<typename T>
 typename SharedPtr<T>::element_type& SharedPtr<T>::operator[](std::ptrdiff_t idx) const {
-    return pointer_ ? pointer_[idx] : nullptr;
+    return pointer_ != nullptr ? pointer_[idx] : nullptr;
 }
 
 template<typename T>
