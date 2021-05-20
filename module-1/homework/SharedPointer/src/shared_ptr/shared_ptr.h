@@ -65,8 +65,8 @@ public:
     class WeakPtr;
 
 private:
-    T* pointer_;
-    ControlBlock<T*>* block_;
+    T* pointer_ = nullptr;
+    SharedWeakCount* block_ = nullptr;
 };
 
 // MakeShared
@@ -80,23 +80,29 @@ SharedPtr<T> MakeShared(Args&& ... args) {
 
 template<typename T>
 SharedPtr<T>::~SharedPtr() {
-    if (block_)
-        block_->decreaseShared();
+    if (block_ != nullptr) {
+        block_->DecreaseShared();
+    }
     block_ = nullptr;
     pointer_ = nullptr;
 }
 
 template<typename T>
 template<typename Y>
-SharedPtr<T>::SharedPtr(Y* ptr): pointer_(ptr), block_(new ControlBlock(ptr)) {}
+SharedPtr<T>::SharedPtr(Y* ptr): pointer_(ptr), block_(new ControlBlock(ptr)) {
+    block_->IncreaseShared();
+}
 
 template<typename T>
 template<typename Y, typename Deleter>
-SharedPtr<T>::SharedPtr(Y* ptr, Deleter deleter) noexcept : pointer_(ptr), block_(new ControlBlock(ptr), deleter) {}
+SharedPtr<T>::SharedPtr(Y* ptr, Deleter deleter) noexcept :
+        pointer_(ptr), block_(new ControlBlock(ptr, deleter)) {
+    block_->IncreaseShared();
+}
 
 template<typename T>
 SharedPtr<T>::SharedPtr(const SharedPtr& other) noexcept : pointer_(other.pointer_), block_(other.block_) {
-    block_->increaseShared();
+    block_->IncreaseShared();
 }
 
 template<typename T>
@@ -147,7 +153,7 @@ T* SharedPtr<T>::Get() const noexcept {
 
 template<typename T>
 int64_t SharedPtr<T>::UseCount() const noexcept {
-    return block_ ? block_->getShared() : 0;
+    return block_ ? block_->GetShared() : 0;
 }
 
 template<typename T>
@@ -212,8 +218,8 @@ public:
     class SharedPtr;
 
 public:
-    ControlBlock<T*>* block_;
-    T* pointer_;
+    SharedWeakCount* block_ = nullptr;
+    T* pointer_ = nullptr;
 };
 
 
@@ -221,15 +227,15 @@ public:
 template<typename T>
 template<typename Y>
 WeakPtr<T>::WeakPtr(const SharedPtr<Y>& other) : pointer_(other.pointer_), block_(other.block_) {
-    if (block_) {
-        block_->increaseWeak();
+    if (block_ != nullptr) {
+        block_->IncreaseWeak();
     }
 }
 
 template<typename T>
 WeakPtr<T>::WeakPtr(const WeakPtr& other) noexcept : pointer_(other.pointer_), block_(other.block_) {
-    if (block_) {
-        block_->increaseWeak();
+    if (block_ != nullptr) {
+        block_->IncreaseWeak();
     }
 }
 
@@ -265,8 +271,8 @@ WeakPtr<T>::~WeakPtr() {
 
 template<typename T>
 void WeakPtr<T>::Reset() noexcept {
-    if (block_) {
-        block_->decreaseWeak();
+    if (block_ != nullptr) {
+        block_->DecreaseWeak();
     }
     block_ = nullptr;
     pointer_ = nullptr;
@@ -280,7 +286,7 @@ void WeakPtr<T>::Swap(WeakPtr<T>& other) noexcept {
 
 template<typename T>
 bool WeakPtr<T>::Expired() const noexcept {
-    return block_ == nullptr || block_->getShared() == 0;
+    return block_ == nullptr || block_->GetShared() == 0;
 }
 
 template<typename T>

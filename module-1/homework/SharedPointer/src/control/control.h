@@ -11,15 +11,15 @@ public:
 
     virtual ~SharedCount() = default;
 
-    void increaseShared() {
+    void IncreaseShared() {
         strongRefCount++;
     }
 
-    void decreaseShared() {
+    void DecreaseShared() {
         strongRefCount--;
     }
 
-    size_t getShared() {
+    size_t GetShared() {
         return strongRefCount;
     }
 
@@ -34,15 +34,15 @@ public:
 
     virtual ~SharedWeakCount() = default;
 
-    void increaseWeak() {
+    void IncreaseWeak() {
         weakRefCount++;
     }
 
-    void decreaseWeak() {
+    void DecreaseWeak() {
         weakRefCount--;
     }
 
-    size_t getWeak() {
+    size_t GetWeak() {
         return weakRefCount;
     }
 
@@ -55,10 +55,12 @@ template<typename T, typename Deleter=std::default_delete<T*>>
 class ControlBlock : public SharedWeakCount {
 public:
     ControlBlock() = default;
-    ControlBlock(T obj) : managedObject(obj) {};
-    ControlBlock(T obj, Deleter d) : managedObject(obj), deleter(d) {};
+
+    explicit ControlBlock(T& obj) : managed_object_(obj) {};
+
+    ControlBlock(T& obj, Deleter& d) : managed_object_(obj), deleter_(d) {};
 
 private:
-    T managedObject;
-    Deleter deleter;
+    T managed_object_;
+    Deleter deleter_;
 };
