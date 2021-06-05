@@ -143,9 +143,7 @@ namespace task {
     template<typename T>
     Variant<Types...>& Variant<Types...>::operator=(T&& t) noexcept {
         const std::size_t idx = Search<T, Types...>::kConvertibleIdx;
-        if (idx == (size_t) -1) {
-            throw std::invalid_argument("Type is not available");
-        }
+        assert(idx != (size_t) -1);
         TypeUnionUtils::Set<idx>(t, std::in_place_index<idx>, this->union_by_type_);
 
         return *this;
