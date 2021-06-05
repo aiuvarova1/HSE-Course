@@ -43,7 +43,7 @@ namespace task {
     public:
         UnionByType() : tail_() {
             if (!std::is_trivially_constructible_v<T>) {
-                value_ = T();
+                new(&value_)T();
             }
         }
 
@@ -69,7 +69,7 @@ namespace task {
         template<size_t Idx, std::size_t TypeIdx, typename T, typename Head, typename... Tail>
         static void Set(T&& value, std::in_place_index_t<0>, UnionByType<TypeIdx, Head, Tail...>& union_by_type) {
             if (std::is_same_v<T, Head> || std::is_convertible_v<T, Head>) {
-                union_by_type.value_ = value;
+                union_by_type.value_ = std::move(value);
             }
         }
 
