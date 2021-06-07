@@ -26,6 +26,7 @@ TEST(IsConstructible, Test1) {
         double v2_;
     };
 
+
     static_assert(IsConstructible<Foo, int32_t>::value, "expected true");
 }
 
@@ -67,6 +68,16 @@ TEST(IsConstructible, Test5) {
     static_assert(IsConstructible<Foo&&, Foo&&>::value, "expected true");
 }
 
+TEST(IsConstructible2, Test11) {
+
+    struct Foo {};
+
+    struct Bar : Foo{};
+
+
+    static_assert(IsConstructible<Foo&&, Bar&>::value, "expected true");
+}
+
 TEST(IsConstructible, Test6) {
 
     struct Foo {};
@@ -84,6 +95,11 @@ TEST(IsNoThrowMoveConstructible, Test1) {
         std::string str;
     };
 
+    static_assert(IsConstructible<Foo, Foo&&>::value);
+    static_assert(std::is_object_v<Foo> || std::is_reference_v<Foo>);
+    static_assert(noexcept(static_cast<Foo>(Declval<Foo>())));
+    static_assert(std::is_nothrow_move_constructible_v<Foo>);
+    static_assert(noexcept(Foo(Declval<Foo>())));
     static_assert(IsNoThrowMoveConstructible<Foo>::value, "expected true");
 }
 
@@ -95,6 +111,7 @@ TEST(IsNoThrowMoveConstructible, Test2) {
         int32_t n;
     };
 
+    static_assert(std::is_nothrow_move_constructible_v<Foo>);
     static_assert(IsNoThrowMoveConstructible<Foo>::value, "expected true");
 }
 
