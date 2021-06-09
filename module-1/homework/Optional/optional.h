@@ -6,9 +6,6 @@
 namespace task {
 
     struct NullOpt {
-        NullOpt() = default;
-
-        ~NullOpt() = default;
     };
 
     constexpr NullOpt kNullOpt{};
@@ -28,7 +25,7 @@ namespace task {
 
         constexpr OptionalBase() : present_(false) {};
 
-        template<class U = T>
+        template<typename U = T>
         constexpr explicit OptionalBase(U&& value) : value_(std::forward<U>(value)), present_(true) {};
 
         template<class... Args>
@@ -36,7 +33,7 @@ namespace task {
         OptionalBase(InPlace, Args&& ... args) : value_(std::forward<Args>(args)...), present_(true) {};
 
     protected:
-        template<class U>
+        template<typename U>
         void Set(U&& value) {
             value_ = std::forward<U>(value);
             present_ = true;
@@ -57,16 +54,16 @@ namespace task {
 
         constexpr OptionalBase() : present_(false) {};
 
-        template<class U = T>
+        template<typename U = T>
         constexpr explicit OptionalBase(U&& value) : value_(std::forward<U>(value)), present_(true) {};
 
-        template<class... Args>
+        template<typename... Args>
         constexpr explicit
         OptionalBase(InPlace, Args&& ... args) : value_(std::forward<Args>(args)...), present_(true) {};
 
     protected:
 
-        template<class U>
+        template<typename U>
         void Set(U&& value) {
             if (present_) {
                 value_.~T();
