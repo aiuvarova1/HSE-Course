@@ -485,7 +485,7 @@ namespace task {
     template<typename T, typename Allocator>
     void List<T, Allocator>::Swap(List& other) noexcept {
 
-        if(allocator_ != other.allocator_ && !allocator_traits::propagate_on_container_swap::value) {
+        if (allocator_ != other.allocator_ && !allocator_traits::propagate_on_container_swap::value) {
             return;
         }
 
@@ -577,7 +577,7 @@ namespace task {
 
     template<typename T, typename Allocator>
     typename List<T, Allocator>::Node* List<T, Allocator>::Partition(List::Node* start_node, List::Node* end_node) {
-        int pivot = end_node->_value;
+        auto pivot{end_node->_value};
 
         Node* last_smaller = start_node;
 
@@ -597,7 +597,7 @@ namespace task {
 
     template<typename T, typename Allocator>
     void List<T, Allocator>::Swap(List::Node* first, List::Node* second) {
-        int tmp_val = first->_value;
+        auto tmp_val{first->_value};
         first->_value = second->_value;
         second->_value = tmp_val;
     }

@@ -15,7 +15,7 @@ public:
     using propagate_on_container_move_assignment = std::false_type;
     using propagate_on_container_swap = std::true_type;
 
-    CustomAllocator();
+    CustomAllocator() = default;
 
     CustomAllocator(const CustomAllocator& other) noexcept;
 
@@ -53,10 +53,11 @@ public:
     friend bool operator!=(const CustomAllocator<K>& lhs, const CustomAllocator<U>& rhs) noexcept;
 
 private:
-    static const size_t kMaxSize = 10000;
-    void* data_ = nullptr;
-    size_t* cur_size_;
-    size_t* refs_;
+    static const size_t kMaxSize{10000};
+
+    void* data_{::operator new(sizeof(T) * kMaxSize)};
+    size_t* cur_size_{new size_t(0)};
+    size_t* refs_{new size_t(1)};
 public:
     void* GetData() const {
         return data_;
@@ -85,12 +86,6 @@ bool operator!=(const CustomAllocator<T>& lhs, const CustomAllocator<U>& rhs) no
     return lhs.data_ != rhs.data_;
 }
 
-template<typename T>
-CustomAllocator<T>::CustomAllocator() {
-    data_ = ::operator new(sizeof(T) * kMaxSize);
-    cur_size_ = new size_t(0);
-    refs_ = new size_t(1);
-}
 
 template<typename T>
 CustomAllocator<T>::CustomAllocator(const CustomAllocator& other) noexcept :
