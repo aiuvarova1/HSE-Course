@@ -24,10 +24,10 @@ struct LibCppIsNoThrowConstructible<true, true, T, Args...> :
 };
 
 
-//template<typename T, typename A>
-//struct LibCppIsNoThrowConstructible<true, true, T, A> :
-//        public std::integral_constant<bool, noexcept(static_cast<T>(Declval<A>()))> {
-//};
+template<typename T, typename A>
+struct LibCppIsNoThrowConstructible<true, true, T, A> :
+        public std::integral_constant<bool, noexcept(static_cast<T>(Declval<A>()))> {
+};
 
 // LibCppIsNoThrowConstructible - partial specializations
 

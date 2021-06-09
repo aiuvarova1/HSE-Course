@@ -14,7 +14,7 @@ struct Conditional {
 // Conditional - partial specialization
 template<typename T, typename F>
 struct Conditional<false, T, F> {
-    typedef F type;
+    using type = F;
 };
 
 template<typename T, typename F>

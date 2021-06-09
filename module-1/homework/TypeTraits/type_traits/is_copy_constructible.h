@@ -10,13 +10,13 @@ struct LibCppIsConstructible;
 
 template<typename Derived, typename Base>
 struct IsInvalidBaseToDerivedCast {
-    typedef Uncvref<Base> base;
-    typedef Uncvref<Derived> derived;
+    using base = Uncvref<Base>;
+    using derived = Uncvref<Derived>;
 
-    typedef typename std::integral_constant<bool,
+    using type = typename std::integral_constant<bool,
             !std::is_same_v<base, derived> &&
             std::is_base_of_v<base, derived> &&
-            !LibCppIsConstructible<derived, Base>::value::value> type;
+            !LibCppIsConstructible<derived, Base>::value::value>;
     static constexpr bool kValue = type::value;
 };
 
@@ -27,12 +27,12 @@ struct IsInvalidLvalueToRvalueCast : std::false_type {
 
 template<typename RefTo, typename RefFrom>
 struct IsInvalidLvalueToRvalueCast<RefTo&&, RefFrom&> {
-    typedef Uncvref<RefTo> to;
-    typedef Uncvref<RefFrom> from;
+    using to = Uncvref<RefTo>;
+    using from = Uncvref<RefFrom>;
 
-    typedef typename std::integral_constant<bool,
+    using type = typename std::integral_constant<bool,
             std::is_same_v<from, to> ||
-            std::is_base_of_v<to, from>> type;
+            std::is_base_of_v<to, from>>;
 };
 
 struct IsConstructibleHelper {
@@ -62,24 +62,24 @@ struct IsConstructibleHelper {
 // LibCppIsConstructible - partial specializations
 template<typename T, typename... Args>
 struct LibCppIsConstructible {
-    typedef decltype(IsConstructibleHelper::NConstructible<T, Args...>(0)) value;
+    using value = decltype(IsConstructibleHelper::NConstructible<T, Args...>(0));
 
 };
 
 template<typename T, typename A>
 struct LibCppIsConstructible<T, A> {
-    typedef decltype(IsConstructibleHelper::DirectConstructible<T, A>(0)) value;
+    using value = decltype(IsConstructibleHelper::DirectConstructible<T, A>(0));
 
 };
 
 template<typename T, typename A>
 struct LibCppIsConstructible<T&, A> {
-    typedef decltype(IsConstructibleHelper::ReferenceConstructible<T&, A>(0)) value;
+    using value = decltype(IsConstructibleHelper::ReferenceConstructible<T&, A>(0));
 };
 
 template<typename T, typename A>
 struct LibCppIsConstructible<T&&, A> {
-    typedef decltype(IsConstructibleHelper::ReferenceConstructible<T&&, A>(0)) value;
+    using value = decltype(IsConstructibleHelper::ReferenceConstructible<T&&, A>(0));
 
 };
 
