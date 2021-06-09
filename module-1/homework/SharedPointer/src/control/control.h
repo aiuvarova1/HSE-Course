@@ -5,7 +5,7 @@
 class SharedCount {
 public:
 
-    SharedCount() : strongRefCount(0) {};
+    SharedCount() = default;
 
     explicit SharedCount(size_t refs) : strongRefCount(refs) {};
 
@@ -24,13 +24,13 @@ public:
     }
 
 protected:
-    std::atomic<std::size_t> strongRefCount;
+    std::atomic<size_t> strongRefCount{0};
 
 };
 
 class SharedWeakCount : public SharedCount {
 public:
-    SharedWeakCount() : weakRefCount(0) {};
+    SharedWeakCount() = default;
 
     virtual ~SharedWeakCount() = default;
 
@@ -47,7 +47,7 @@ public:
     }
 
 protected:
-    std::atomic<std::size_t> weakRefCount;
+    std::atomic<size_t> weakRefCount{0};
 
 };
 

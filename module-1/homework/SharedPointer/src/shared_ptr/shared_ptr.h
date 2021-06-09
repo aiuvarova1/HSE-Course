@@ -218,8 +218,8 @@ public:
     class SharedPtr;
 
 public:
-    SharedWeakCount* block_ = nullptr;
-    T* pointer_ = nullptr;
+    SharedWeakCount* block_{nullptr};
+    T* pointer_{nullptr};
 };
 
 
