@@ -9,7 +9,7 @@ namespace task {
     template<typename Head, typename... Tail>
     struct TypeList {
         Head head;
-        typedef TypeList<Tail...> tail;
+        using tail = TypeList<Tail...>;
     };
 
     template<size_t Idx, typename List>
@@ -17,12 +17,12 @@ namespace task {
 
     template<typename Head, typename... Tail>
     struct TypeAt<0, TypeList<Head, Tail...>> {
-        typedef Head type;
+        using type = Head;
     };
 
     template<size_t Idx, typename Head, typename... Tail>
     struct TypeAt<Idx, TypeList<Head, Tail...>> {
-        typedef typename TypeAt<Idx - 1, TypeList<Tail...>>::type type;
+        using type = typename TypeAt<Idx - 1, TypeList<Tail...>>::type;
     };
 
 
