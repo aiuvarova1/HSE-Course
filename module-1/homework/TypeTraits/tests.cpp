@@ -14,8 +14,10 @@ TEST(IsConstructible, Test1) {
     public:
         explicit Foo(int32_t n) : v1_(n), v2_() {
         }
+
         Foo(int32_t n, double f) noexcept : v1_(n), v2_(f) {
         }
+
         void Bar() {
             v1_ = 0;
             v2_ = 0;
@@ -25,7 +27,6 @@ TEST(IsConstructible, Test1) {
         int32_t v1_;
         double v2_;
     };
-
 
     static_assert(IsConstructible<Foo, int32_t>::value, "expected true");
 }
@@ -72,8 +73,7 @@ TEST(IsConstructible2, Test11) {
 
     struct Foo {};
 
-    struct Bar : Foo{};
-
+    struct Bar : Foo {};
 
     static_assert(IsConstructible<Foo&&, Bar&>::value, "expected true");
 }
@@ -129,8 +129,11 @@ TEST(MoveIfNoExcept, Test1) {
 
     struct ThrowFoo {
         bool copy = false;
+
         ThrowFoo() = default;
+
         ThrowFoo(ThrowFoo&&){};
+
         ThrowFoo(const ThrowFoo&) {
             copy = true;
         };
@@ -144,7 +147,9 @@ TEST(MoveIfNoExcept, Test2) {
 
     struct NonThrowFoo {
         NonThrowFoo() = default;
+
         NonThrowFoo(NonThrowFoo&&) noexcept {};
+
         NonThrowFoo(const NonThrowFoo&) noexcept {
             copy = true;
         };
