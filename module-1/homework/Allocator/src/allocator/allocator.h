@@ -1,10 +1,10 @@
 #include <memory>
 #include <type_traits>
 
-template<typename T>
+template <typename T>
 class CustomAllocator {
 public:
-    template<typename U>
+    template <typename U>
     struct rebind {  // NOLINT
         using other = CustomAllocator<U>;
     };
@@ -21,7 +21,7 @@ public:
 
     ~CustomAllocator();
 
-    template<typename U>
+    template <typename U>
     explicit CustomAllocator(const CustomAllocator<U>& other) noexcept;
 
     T* allocate(size_t n) {  // NOLINT
@@ -33,23 +33,24 @@ public:
         return static_cast<T*>(data_) + (*cur_size_ - n);
     }
 
-    void deallocate(T* p, size_t n) {  // NOLINT
+    void deallocate(T* p, size_t n){
+        // NOLINT
         // no realization for linear allocator
     };
 
-    template<typename... Args>
-    void construct(pointer p, Args&& ... args) {  // NOLINT
-        new(static_cast<void*>(p)) T{std::forward<Args>(args)...};
+    template <typename... Args>
+    void construct(pointer p, Args&&... args) {  // NOLINT
+        new (static_cast<void*>(p)) T{std::forward<Args>(args)...};
     };
 
     void destroy(pointer p) {  // NOLINT
         p->~T();
     };
 
-    template<typename K, typename U>
+    template <typename K, typename U>
     friend bool operator==(const CustomAllocator<K>& lhs, const CustomAllocator<U>& rhs) noexcept;
 
-    template<typename K, typename U>
+    template <typename K, typename U>
     friend bool operator!=(const CustomAllocator<K>& lhs, const CustomAllocator<U>& rhs) noexcept;
 
 private:
@@ -58,6 +59,7 @@ private:
     void* data_{::operator new(sizeof(T) * kMaxSize)};
     size_t* cur_size_{new size_t(0)};
     size_t* refs_{new size_t(1)};
+
 public:
     void* GetData() const {
         return data_;
@@ -76,31 +78,30 @@ public:
     }
 };
 
-template<typename T, typename U>
+template <typename T, typename U>
 bool operator==(const CustomAllocator<T>& lhs, const CustomAllocator<U>& rhs) noexcept {
     return lhs.data_ == rhs.data_;
 }
 
-template<typename T, typename U>
+template <typename T, typename U>
 bool operator!=(const CustomAllocator<T>& lhs, const CustomAllocator<U>& rhs) noexcept {
     return lhs.data_ != rhs.data_;
 }
 
-
-template<typename T>
-CustomAllocator<T>::CustomAllocator(const CustomAllocator& other) noexcept :
-        data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
+template <typename T>
+CustomAllocator<T>::CustomAllocator(const CustomAllocator& other) noexcept
+    : data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
     *refs_ += 1;
 }
 
-template<typename T>
-template<typename U>
-CustomAllocator<T>::CustomAllocator(const CustomAllocator<U>& other) noexcept :
-        data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
+template <typename T>
+template <typename U>
+CustomAllocator<T>::CustomAllocator(const CustomAllocator<U>& other) noexcept
+    : data_(other.GetData()), cur_size_(other.GetSize()), refs_(other.GetRefs()) {
     *refs_ += 1;
 }
 
-template<typename T>
+template <typename T>
 CustomAllocator<T>::~CustomAllocator() {
     *refs_ -= 1;
     if (*refs_ == 0) {
